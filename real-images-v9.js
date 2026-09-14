@@ -1,0 +1,42 @@
+(() => {
+  const BASE = 'https://raw.githubusercontent.com/moonhong1164/Symbolon/main/';
+  const files = [
+    '01.The Warrior.JPG','02.The Lover.JPG','03.The Mediator.JPG','04.The Mother.JPG','05.The Ego.JPG','06.The Servitor.JPG','07.The Partner.JPG','08.The Seducer.JPG','09.The Preacher.JPG','10.The Master.JPG','11.The Jester.JPG','12.The Angel.JPG','13.Defiance.JPG','14.The Two Faces Of Eve.JPG','15.Articulation.JPG','16.Incompatibilty.JPG','17.Caring.JPG','18.The Family.JPG','19.Abortion.JPG','20.Mnemosyne.JPG','21.The Ice Queen.JPG','22.Deliverance.JPG','23.Sleeping Beauty-Slumber.JPG','24.The Battle.JPG','25.Queen.JPG','26.The Actor.JPG','27.The Ailing King.JPG','28.The Wedding.JPG','29.The Magician.JPG','30.Fortuna.JPG','31.The Burden.JPG','32.The Fall.JPG','33.Retreat.JPG','34.Eros.JPG','35.The Stocks.JPG','36.Guilt.JPG','37.Disagreement.JPG','38.The Vampire.JPG','39.The Crusader.JPG','40.Prevention.JPG','41.The Spiteful Troublemaker.JPG','42.The Absolute Fool.JPG','43.The Golden Girl.JPG','44.Clinging.JPG','45.The Gilded Cage.JPG','46.The Marionette.JPG','47.Matter and Spirit.JPG','48.Responsibility For Creation.JPG','49.The Farewell.JPG','50.The Garden of Spirits.JPG','51.The staregist.JPG','52.Vanity Fair.JPG','53.The Pied Piper.JPG','54.Master and Disciple.JPG','55.Affliction.JPG','56.Dreaming Johnny.JPG','57.Silence.JPG','58.Everyday life in the Relationship.JPG','59.Castigation.JPG','60.The Inquisition.JPG','61.Fear.JPG','62.Furies.JPG','63.Deception.JPG','64.Disaster.JPG','65.The Symbolon.JPG','66.Sadness.JPG','67.Separation.JPG',"68.The King's Two Children.JPG",'69.The Black Mass.JPG','70.Depression.JPG','71.The Phoenix.JPG','72.The False Halo.JPG','73.Confession.JPG','74.The Quantum Leap.JPG','75.Pythia.JPG','76.Captivity.JPG','77.Moria.JPG','78.The Question of the Grail.JPG'
+  ];
+  const url = i => BASE + encodeURIComponent(files[i]).replace(/%2F/g,'/');
+
+  // 78 cartas: la biblioteca, detalle, prácticas y tiradas usan estas imágenes.
+  if (Array.isArray(window.SYMBOLON_CARDS)) {
+    window.SYMBOLON_CARDS.forEach((card, i) => {
+      if (files[i]) card.image = url(i);
+      card.sourceNote = 'Imagen de carta cargada desde un repositorio público de GitHub con el mazo Symbolon. La explicación de la ficha es una síntesis pedagógica propia del curso.';
+    });
+    window.SYMBOLON_CARD_INDEX = Object.fromEntries(window.SYMBOLON_CARDS.map(card => [card.id, card]));
+  }
+
+  // En cada módulo, el mapa visual muestra cartas reales en vez de láminas abstractas.
+  if (window.SYMBOLON_COURSE?.modules) {
+    const focus = [
+      [64,70,0,11],   // 00: Symbolon, Phoenix, Warrior, Angel
+      [13,20,23,56],  // 01: Two Faces, Ice Queen, Battle, Silence
+      [0,1,2,3],      // 02: arquetipos base I
+      [4,5,6,7],      // 03: arquetipos base II
+      [8,9,10,11],    // 04: arquetipos base III
+      [12,14,15,16],  // 05
+      [17,18,19,21],  // 06
+      [22,24,25,26],  // 07
+      [27,28,29,30],  // 08
+      [31,32,33,34],  // 09
+      [35,36,37,38],  // 10
+      [39,40,41,42],  // 11
+      [43,44,45,46]   // 12
+    ];
+    window.SYMBOLON_COURSE.modules.forEach((m, mi) => {
+      const ids = focus[mi] || [mi*4,mi*4+1,mi*4+2,mi*4+3];
+      if (Array.isArray(m.slides)) m.slides.forEach((s, si) => {
+        const idx = ids[si % ids.length];
+        if (files[idx]) s.image = url(idx);
+      });
+    });
+  }
+})();
