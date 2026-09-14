@@ -1,0 +1,108 @@
+name: Restructure Symbolon study path V10
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build clearer V10 study experience
+        shell: bash
+        run: |
+          cp app-v8.js app-v10.js
+          cp styles-v8.css styles-v10.css
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('app-v10.js')
+          s=p.read_text()
+
+          # Course becomes a clear 4-phase route; modules are supporting lessons.
+          s=re.sub(r"  function coursePage\(\)\{return `.*?`\}\n\n  function modulePage",
+          '''  function coursePage(){return `<div class="content"><div class="page-kicker">RUTA DE ESTUDIO</div><h1 class="page-title">Así se aprende<br>Symbolon.</h1><p class="page-lede">No tienes que estudiar 78 definiciones ni completar 13 módulos antes de tocar las cartas. El orden correcto es aprender 12 funciones internas, entender cómo se combinan y después practicar lecturas.</p><div class="study-path"><article class="study-phase"><span>FASE 1 · EMPIEZA AQUÍ</span><h2>Las 12 cartas fundamentales</h2><p>Aprende una por una las 12 personas internas: qué quieren, qué temen, cómo actúan en sombra y cuál es su recurso consciente.</p><a class="primary study-link" href="#fundamentals">Estudiar las 12</a></article><article class="study-phase"><span>FASE 2</span><h2>Aprende la fórmula A + B</h2><p>Las otras 66 cartas no se memorizan como 66 respuestas nuevas. Se entienden como encuentro, cooperación o conflicto entre dos de las 12 funciones.</p><a class="secondary study-link" href="#module/m5">Entender combinaciones</a></article><article class="study-phase"><span>FASE 3</span><h2>Recorre las 66 combinaciones</h2><p>Estudia cada carta viendo primero la imagen, después los dos arquetipos y finalmente la dinámica psicológica. La biblioteca las separa de las 12 fundamentales.</p><a class="secondary study-link" href="#cards">Ver las 78</a></article><article class="study-phase"><span>FASE 4</span><h2>Interpreta tiradas</h2><p>Cuando reconozcas las dinámicas, practica una carta, dos cartas y después Problema → Camino → Resultado.</p><a class="secondary study-link" href="#practice">Ir al entrenador</a></article></div><div class="notice"><strong>¿Y los 13 módulos?</strong> Son clases de apoyo para entender lenguaje visual, astrología, relaciones entre arquetipos y técnica de lectura. No son 13 bloques que debas memorizar antes de estudiar las cartas.</div><div class="section-head"><div><div class="page-kicker">CLASES DE APOYO</div><h2>Los 13 módulos</h2></div><p>Úsalos mientras avanzas por las cuatro fases anteriores.</p></div>${moduleCards()}</div>`}
+
+  function modulePage''', s, flags=re.S)
+
+          # Insert dedicated Fundamentals study page before library filtering.
+          marker="  let cardFilters={q:'',family:'all',status:'all',fav:false,difficult:false};"
+          fundamentals=r'''  function studyFundamental(c){const st=cardState(c.id);return `<article class="fundamental-study symbolon-card" data-card="${c.id}"><div class="fundamental-image"><img src="${c.image}" alt="${esc(c.title)}"><span class="state-badge">${statusLabel(st.status)}</span></div><div class="fundamental-copy"><div class="page-kicker">CARTA ${String(c.number).padStart(2,'0')}</div><h2>${esc(c.title)}</h2><div class="astro-big">${esc(c.glyphA)} ${esc(c.signA)} · ${esc(c.planetGlyphA)} ${esc(c.planetA)}</div><h3>${esc(c.idea)}</h3><p>${esc(c.psychology)}</p><div class="study-four"><div><strong>Deseo</strong><span>${esc(c.desire)}</span></div><div><strong>Miedo</strong><span>${esc(c.fear)}</span></div><div><strong>Sombra</strong><span>${esc(c.shadow)}</span></div><div><strong>Recurso</strong><span>${esc(c.potential)}</span></div></div><div class="remember-line"><strong>Para recordarla:</strong> ${esc(c.remember)}</div><small>Toca la carta para abrir su ficha completa y practicarla.</small></div></article>`}
+  function fundamentalsPage(){const base=CARDS.filter(c=>c.family==='fundamental').slice(0,12);return `<div class="content"><div class="page-kicker">FASE 1 · BASE DEL SISTEMA</div><h1 class="page-title">Las 12 personas<br>internas.</h1><p class="page-lede">Estas 12 sí se estudian primero. Si entiendes bien estas funciones, las 66 combinaciones dejan de parecer 66 cartas aisladas.</p><div class="method-box"><h2>Cómo estudiar cada una</h2><ol><li><strong>Mira la imagen</strong> durante unos segundos sin leer.</li><li><strong>Nombra la función:</strong> qué quiere hacer esta parte de ti.</li><li><strong>Aprende la polaridad:</strong> deseo, miedo, sombra y recurso.</li><li><strong>Recuerda una frase,</strong> no un párrafo entero.</li><li><strong>Cierra la ficha e intenta explicarla</strong> con tus propias palabras.</li></ol><p>Haz 3 cartas por sesión. Cuando puedas explicar las 12 sin mirar, pasa a las combinaciones.</p></div><div class="study-list">${base.map(studyFundamental).join('')}</div><div class="hero-actions"><a class="primary study-link" href="#course">Volver a la ruta de estudio</a><a class="secondary study-link" href="#practice/archetypes">Practicar reconocimiento</a></div></div>`}
+
+'''
+          if 'function fundamentalsPage()' not in s:
+              s=s.replace(marker,fundamentals+marker)
+
+          # Library: make the 78 count explicit and show explanations on cards.
+          s=re.sub(r"  function cardsPage\(\)\{.*?\}\n  function cardTile",
+          '''  function cardsGridHtml(list){const base=list.filter(c=>c.family==='fundamental');const combos=list.filter(c=>c.family!=='fundamental');return `${base.length?`<div class="library-group"><div class="section-head"><div><div class="page-kicker">BASE</div><h2>${base.length} de 12 fundamentales</h2></div><p>Las funciones que debes aprender primero.</p></div><div class="card-grid">${base.map(cardTile).join('')}</div></div>`:''}${combos.length?`<div class="library-group"><div class="section-head"><div><div class="page-kicker">COMBINACIONES</div><h2>${combos.length} de 66 combinaciones</h2></div><p>Dos funciones internas interactuando en una misma escena.</p></div><div class="card-grid">${combos.map(cardTile).join('')}</div></div>`:''}`}
+  function cardsPage(){const list=filteredCards();return `<div class="content"><div class="page-kicker">BIBLIOTECA COMPLETA</div><h1 class="page-title">78 = 12 + 66</h1><p class="page-lede">Aquí están las 78 cartas: 12 fundamentales y 66 combinaciones. Cada tarjeta ya muestra una idea esencial; al tocarla se abre la explicación completa con dinámica psicológica, deseo, miedo, sombra, potencial y lectura en Problema · Camino · Resultado.</p><div class="library-count"><strong>${list.length}</strong><span>de 78 cartas visibles</span></div><div class="toolbar"><div class="search"><input id="cardSearch" placeholder="Buscar carta, signo, planeta…" value="${esc(cardFilters.q)}"></div><select id="familyFilter"><option value="all">Todas las 78</option><option value="fundamental" ${cardFilters.family==='fundamental'?'selected':''}>Solo 12 fundamentales</option><option value="luna" ${cardFilters.family==='luna'?'selected':''}>Familia Luna</option><option value="sol" ${cardFilters.family==='sol'?'selected':''}>Familia Sol</option><option value="combinada" ${cardFilters.family==='combinada'?'selected':''}>Otras combinaciones</option></select><select id="statusFilter"><option value="all">Cualquier estado</option><option value="not" ${cardFilters.status==='not'?'selected':''}>No estudiadas</option><option value="seen" ${cardFilters.status==='seen'?'selected':''}>Vistas</option><option value="practicing" ${cardFilters.status==='practicing'?'selected':''}>Practicando</option><option value="mastered" ${cardFilters.status==='mastered'?'selected':''}>Dominadas</option></select><button class="filter-chip ${cardFilters.fav?'active':''}" id="favFilter">★ Favoritas</button><button class="filter-chip ${cardFilters.difficult?'active':''}" id="diffFilter">! Difíciles</button></div><div id="cardGrid">${cardsGridHtml(list)}</div></div>`}
+  function cardTile''', s, flags=re.S)
+
+          s=re.sub(r"  function cardTile\(c\)\{.*?\}\n  function matrixHtml",
+          '''  function cardTile(c){const st=cardState(c.id);return `<article class="symbolon-card" data-card="${c.id}"><span class="fav-star">${st.favorite?'★':'☆'}</span><span class="state-badge">${statusLabel(st.status)}</span><img src="${c.image}" alt="Carta ${esc(c.title)}"><div class="body"><div class="number">${String(c.number).padStart(2,'0')} · ${c.family==='fundamental'?'fundamental':'combinación'}</div><h3>${esc(c.title)}</h3><div class="astro">${esc(c.glyphA)} ${esc(c.signA)}${c.signB?` + ${esc(c.glyphB)} ${esc(c.signB)}`:''}</div><p class="card-summary">${esc(c.idea)}</p><small class="open-hint">Toca para ver la explicación completa →</small></div></article>`}
+  function matrixHtml''', s, flags=re.S)
+
+          # Clearer wording inside modules: support lessons, not the main memorisation path.
+          s=s.replace('<span>4 láminas</span><span>Práctica</span><span>Test</span>','<span>4 cartas guía</span><span>Práctica</span><span>Test</span>')
+          s=s.replace('<div class="page-kicker">MAPA VISUAL</div><h2>Antes de entrar al detalle</h2></div><p>Abre cada lámina a tamaño completo. Están pensadas para fijar la estructura del módulo.</p>', '<div class="page-kicker">CARTAS GUÍA</div><h2>Ejemplos del módulo</h2></div><p>Estas cartas sirven para ilustrar la idea de la clase. No tienes que memorizarlas aquí: el estudio sistemático está en Las 12 fundamentales y Las 78 cartas.</p>')
+
+          # Add fundamentals route and binding.
+          s=s.replace("else if(route==='course')html=coursePage();else if(route.startsWith('module/'))", "else if(route==='course')html=coursePage();else if(route==='fundamentals')html=fundamentalsPage();else if(route.startsWith('module/'))")
+          s=s.replace("if(route==='cards') bindCards();", "if(route==='cards') bindCards();\n    if(route==='fundamentals') bindCardTiles();")
+          s=s.replace("const refresh=()=>{const grid=$('#cardGrid');if(grid)grid.innerHTML=filteredCards().map(cardTile).join('');bindCardTiles()}", "const refresh=()=>{const grid=$('#cardGrid');if(grid)grid.innerHTML=cardsGridHtml(filteredCards());bindCardTiles()}")
+          s=s.replace("$('#startBtn')?.addEventListener('click',()=>{const next=COURSE.modules.find(m=>!state.completedModules.includes(m.id))||COURSE.modules[0];go('module/'+next.id)})", "$('#startBtn')?.addEventListener('click',()=>go('course'))")
+
+          # Update outdated sources wording.
+          s=s.replace('Las imágenes incluidas en este ZIP son láminas pedagógicas originales creadas para el curso. No son copias de las ilustraciones oficiales de Thea Weller. La arquitectura permite sustituirlas más adelante por imágenes autorizadas sin tocar la lógica de la aplicación.', 'Durante esta revisión, las cartas visuales se cargan desde un repositorio público de referencia en GitHub. Que estén públicamente accesibles no confirma una licencia de redistribución; para una publicación comercial final conviene sustituirlas por assets con derechos confirmados.')
+
+          p.write_text(s)
+
+          # New CSS for study path and expanded fundamentals.
+          css=Path('styles-v10.css')
+          css.write_text(css.read_text()+r'''
+
+/* V10 · ruta de estudio clara */
+.study-path{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:28px 0}
+.study-phase{border:1px solid var(--line);border-radius:22px;padding:24px;background:var(--panel)}
+.study-phase>span{font-size:.72rem;letter-spacing:.16em;color:var(--gold);font-weight:700}
+.study-phase h2{font-family:var(--serif);font-weight:400;font-size:2rem;margin:10px 0}
+.study-phase p{color:var(--muted);line-height:1.65;margin-bottom:20px}
+.study-link{display:inline-flex;text-decoration:none;align-items:center;justify-content:center}
+.method-box{border:1px solid var(--line);border-radius:22px;padding:22px 24px;margin:24px 0 32px;background:var(--panel)}
+.method-box h2{font-family:var(--serif);font-weight:400;font-size:1.8rem;margin-top:0}
+.method-box li{margin:10px 0;color:var(--muted);line-height:1.55}.method-box li strong{color:var(--text)}
+.study-list{display:grid;gap:22px}
+.fundamental-study{display:grid;grid-template-columns:minmax(220px,32%) 1fr;gap:24px;padding:18px;border:1px solid var(--line);border-radius:24px;background:var(--panel);cursor:pointer;position:relative;overflow:hidden}
+.fundamental-image{position:relative}.fundamental-image img{width:100%;height:auto;display:block;border-radius:16px}.fundamental-image .state-badge{position:absolute;top:10px;right:10px}
+.fundamental-copy h2{font-family:var(--serif);font-size:2.35rem;font-weight:400;margin:6px 0}.fundamental-copy h3{font-family:var(--serif);font-weight:400;font-size:1.5rem;margin:18px 0 8px}.fundamental-copy>p{color:var(--muted);line-height:1.68}
+.study-four{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.study-four>div{border:1px solid var(--line);border-radius:14px;padding:12px}.study-four strong,.study-four span{display:block}.study-four strong{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:5px}.study-four span{color:var(--muted);line-height:1.45}
+.remember-line{padding:14px;border-radius:14px;background:rgba(180,145,83,.10);margin:14px 0;line-height:1.55}
+.library-count{display:flex;align-items:end;gap:10px;margin:18px 0 22px}.library-count strong{font-family:var(--serif);font-size:3rem;font-weight:400;line-height:1}.library-count span{color:var(--muted);padding-bottom:4px}
+.library-group{margin:30px 0 50px}.card-summary{color:var(--muted);line-height:1.45;margin:10px 0 8px}.open-hint{color:var(--gold);display:block;line-height:1.35}
+#cardGrid>.library-group .card-grid{margin-top:14px}
+@media(max-width:800px){.study-path{grid-template-columns:1fr}.fundamental-study{grid-template-columns:1fr}.fundamental-image{max-width:430px;margin:auto}.study-four{grid-template-columns:1fr}.study-phase h2{font-size:1.65rem}.fundamental-copy h2{font-size:2rem}}
+''')
+
+          # Point index to V10 and add direct Fundamentals nav item.
+          ip=Path('index.html'); html=ip.read_text()
+          html=html.replace('styles-v8.css?v=9','styles-v10.css?v=10')
+          html=html.replace('app-v8.js?v=9','app-v10.js?v=10')
+          html=html.replace('<span class="version-badge">V9</span>','<span class="version-badge">V10</span>')
+          if 'data-route="fundamentals"' not in html:
+              html=html.replace('<button data-route="course">◫ <span>Aprender</span></button>', '<button data-route="course">◫ <span>Ruta de estudio</span></button>\n          <button data-route="fundamentals">◉ <span>Las 12 fundamentales</span></button>')
+          ip.write_text(html)
+          PY
+
+          git config user.name "Javi Horus"
+          git config user.email "actions@users.noreply.github.com"
+          git add app-v10.js styles-v10.css index.html
+          git commit -m "V10 clarify study method and expose all card explanations"
+          git push
