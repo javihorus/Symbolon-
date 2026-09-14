@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="styles-v10.css?v=10" />
   <link rel="stylesheet" href="styles-v11.css?v=11" />
   <link rel="stylesheet" href="styles-v12.css?v=12" />
+  <link rel="stylesheet" href="styles-v14.css?v=14" />
   <script>
     if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}
     if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
@@ -22,7 +23,7 @@
   <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
   <header class="topbar">
     <button class="icon-btn mobile-only" id="menuBtn" aria-label="Abrir menú">☰</button>
-    <a class="brand" href="#home"><span class="brand-mark">◐</span><span>SYMBOLON</span><span class="version-badge">V13</span></a>
+    <a class="brand" href="#home"><span class="brand-mark">◐</span><span>SYMBOLON</span><span class="version-badge">V14</span></a>
     <div class="top-actions">
       <button class="ghost-btn" id="fontBtn" title="Tamaño de texto">Aa</button>
       <button class="ghost-btn" id="installBtn">Instalar</button>
@@ -74,5 +75,7 @@
   <script src="study-v11.js?v=11"></script>
   <script src="manual-ui-v12.js?v=12"></script>
   <script src="fix-card-links-v13.js?v=13"></script>
+  <script src="astro-guide-v14.js?v=14"></script>
+  <script src="interactive-reading-v14.js?v=14"></script>
 </body>
 </html>
