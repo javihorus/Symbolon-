@@ -11,6 +11,7 @@
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
   <link rel="stylesheet" href="styles-v8.css?v=9" />
   <link rel="stylesheet" href="styles-v10.css?v=10" />
+  <link rel="stylesheet" href="styles-v11.css?v=11" />
   <script>
     if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}
     if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
@@ -20,7 +21,7 @@
   <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
   <header class="topbar">
     <button class="icon-btn mobile-only" id="menuBtn" aria-label="Abrir menú">☰</button>
-    <a class="brand" href="#home"><span class="brand-mark">◐</span><span>SYMBOLON</span><span class="version-badge">V10</span></a>
+    <a class="brand" href="#home"><span class="brand-mark">◐</span><span>SYMBOLON</span><span class="version-badge">V11</span></a>
     <div class="top-actions">
       <button class="ghost-btn" id="fontBtn" title="Tamaño de texto">Aa</button>
       <button class="ghost-btn" id="installBtn">Instalar</button>
@@ -63,10 +64,11 @@
   <script src="cards-data-v8.js?v=9"></script>
   <script src="real-images-v9.js?v=9"></script>
   <script src="cases-data.js"></script>
-  <script src="cloud-config.js"></script>
+  <script src="cloud-config.js?v=11"></script>
   <script src="cloud.js"></script>
   <script src="audio-data.js"></script>
   <script src="app-v8.js?v=9"></script>
   <script src="study-v10.js?v=10"></script>
+  <script src="study-v11.js?v=11"></script>
 </body>
 </html>
