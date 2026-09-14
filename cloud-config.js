@@ -1,6 +1,9 @@
-// Configuración pública de Supabase. Usa el mismo proyecto ya conectado para SHEFA.
+// SYMBOLON · Supabase DESACTIVADA temporalmente.
+// No reutilizar el proyecto de SHEFA.
+// Cuando creemos un proyecto Supabase exclusivo para Symbolon,
+// sustituiremos estos valores por su URL y anon key propias.
 window.SYMBOLON_CLOUD_CONFIG = {
-  url: 'https://rehljuctmkbvoypnhkfg.supabase.co',
-  anonKey: 'sb_publishable_wz0lBISsgFOkrm2P2dWzPg_LL0so6EY',
+  url: '',
+  anonKey: '',
   table: 'symbolon_user_state'
 };
