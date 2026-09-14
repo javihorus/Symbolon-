@@ -1,0 +1,59 @@
+name: Deploy Symbolon to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare GitHub Pages build
+        run: |
+          rm -rf _site
+          mkdir _site
+          rsync -a --exclude='.git' --exclude='.github' --exclude='_site' ./ _site/
+          python3 - <<'PY'
+          from pathlib import Path
+          # GitHub project pages live under /Symbolon-/, so make card asset URLs relative.
+          p=Path('_site/cards-data-v8.js')
+          if p.exists():
+              s=p.read_text(encoding='utf-8')
+              s=s.replace('"/assets/card-images-v6/', '"assets/card-images-v6/')
+              s=s.replace("'/assets/card-images-v6/", "'assets/card-images-v6/")
+              p.write_text(s,encoding='utf-8')
+          # Force V8 index and remove any obsolete Netlify HUD snippet if present.
+          p=Path('_site/index.html')
+          if p.exists():
+              s=p.read_text(encoding='utf-8')
+              import re
+              s=re.sub(r'<script async src="/\.netlify/scripts/hud\?variant=public".*?</script>\s*','',s,flags=re.S)
+              p.write_text(s,encoding='utf-8')
+          PY
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
