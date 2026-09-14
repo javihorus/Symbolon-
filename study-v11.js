@@ -9,7 +9,7 @@
 
   const chunk = (arr,size) => Array.from({length:Math.ceil(arr.length/size)},(_,i)=>arr.slice(i*size,i*size+size));
   const fundamentalGroups = chunk(CARDS.slice(0,12).map(c=>c.id),3);
-  const comboGroups = chunk(CARDS.slice(12,78).map(c=>c.id),6);
+  const comboGroups = chunk(CARDS.slice(12,78).map(c=>c.id),3);
 
   const LESSONS = [
     ...fundamentalGroups.map((ids,i)=>({id:`base-${i+1}`,stage:'LAS 12 FUNDAMENTALES',title:[
