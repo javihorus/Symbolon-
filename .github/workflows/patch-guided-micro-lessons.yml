@@ -1,0 +1,32 @@
+name: Patch guided micro lessons
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use 3-card combination lessons
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('study-v11.js')
+          s=p.read_text()
+          old="const comboGroups = chunk(CARDS.slice(12,78).map(c=>c.id),6);"
+          new="const comboGroups = chunk(CARDS.slice(12,78).map(c=>c.id),3);"
+          if old in s:
+              p.write_text(s.replace(old,new))
+          PY
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add study-v11.js
+          git commit -m "Guided study: split 66 combinations into 3-card micro-lessons"
+          git push
