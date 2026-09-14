@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=367605b3-7e55-414e-a558-3836d957c81f
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=367605b3-7e55-414e-a558-3836d957c81f">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#12110f" />
+  <meta name="description" content="SYMBOLON · El juego del recuerdo — curso interactivo de estudio, biblioteca de 78 cartas, práctica y diario." />
+  <title>SYMBOLON · El juego del recuerdo</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="styles-v6.css?v=6" />
+<script>
+// SYMBOLON V6: desactivar caché PWA antigua durante revisión
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}
+if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
+</script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <button class="icon-btn mobile-only" id="menuBtn" aria-label="Abrir menú">☰</button>
+    <a class="brand" href="#home"><span class="brand-mark">◐</span><span>SYMBOLON</span><span class="version-badge">V7</span></a>
+    <div class="top-actions">
+      <button class="ghost-btn" id="fontBtn" title="Tamaño de texto">Aa</button>
+      <button class="ghost-btn" id="installBtn">Instalar</button>
+      <button class="ghost-btn account-btn" id="accountBtn">Activar nube</button>
+      <button class="ghost-btn" id="themeBtn" title="Cambiar tema">◐</button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+        <div class="progress-card">
+          <div class="eyebrow">DOMINIO DE SYMBOLON</div>
+          <div class="progress-line"><div id="overallBar"></div></div>
+          <div class="progress-meta"><span id="progressText">0 / 78 cartas</span><span id="progressPct">0%</span></div>
+        </div>
+        <nav class="main-nav">
+          <button data-route="home">⌂ <span>Inicio</span></button>
+          <button data-route="course">◫ <span>Aprender</span></button>
+          <button data-route="cards">✦ <span>Las 78 cartas</span></button>
+          <button data-route="practice">◎ <span>Practicar</span></button>
+          <button data-route="journal">✎ <span>Mi diario</span></button>
+          <button data-route="progress">◔ <span>Mi progreso</span></button>
+        </nav>
+        <div class="nav-divider"></div>
+        <div class="module-caption">MÓDULOS</div>
+        <nav id="moduleNav" class="module-nav"></nav>
+        <div class="nav-divider"></div>
+        <nav class="minor-nav"><button data-route="sources">Fuentes y método</button><button data-route="settings">Ajustes</button></nav>
+      </div>
+    </aside>
+    <main id="app" class="app" tabindex="-1"></main>
+  </div>
+  <div class="player" id="player" hidden>
+    <div class="player-track"><div id="audioProgress"></div></div>
+    <div class="player-main"><button class="player-icon" id="audioPlay">▶</button><div class="player-copy"><strong id="audioTitle">Audio</strong><span id="audioStatus">Listo para escuchar</span></div><label class="rate">Velocidad <select id="audioRate"><option value="0.85">0.85×</option><option value="1" selected>1×</option><option value="1.1">1.1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></label><button class="player-icon" id="audioStop">■</button><button class="player-icon" id="playerClose">×</button></div>
+  </div>
+  <div id="modalHost"></div><div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="course-data.js"></script>
+  <script src="cards-data-v6.js?v=6"></script>
+  <script src="cases-data.js"></script>
+  <script src="cloud-config.js"></script>
+  <script src="cloud.js"></script>
+  <script src="audio-data.js"></script>
+  <script src="app-v6.js?v=6"></script>
+</body>
+</html>
+<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="367605b3-7e55-414e-a558-3836d957c81f" data-app-host="app.netlify.com"></script>
