@@ -1,0 +1,35 @@
+name: Safari V8 cache break
+
+on:
+  push:
+    paths:
+      - .github/workflows/safari-v8.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build Safari V8 files
+        run: |
+          cp app-v6.js app-v8.js
+          sed -i 's/ loading="lazy"//g' app-v8.js
+          cp cards-data-v6.js cards-data-v8.js
+          sed -i 's#\.webp"#.webp?v=8"#g' cards-data-v8.js
+          cp styles-v6.css styles-v8.css
+          sed -i 's/styles-v6.css?v=6/styles-v8.css?v=8/g' index.html
+          sed -i 's/cards-data-v6.js?v=6/cards-data-v8.js?v=8/g' index.html
+          sed -i 's/app-v6.js?v=6/app-v8.js?v=8/g' index.html
+          sed -i 's/>V7</>V8</g' index.html
+      - name: Commit V8
+        run: |
+          git config user.name "Javi Horus"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html app-v8.js cards-data-v8.js styles-v8.css
+          git commit -m "Create Safari-safe V8 with forced image refresh" || exit 0
+          git push
