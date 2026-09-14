@@ -1,0 +1,83 @@
+name: Import Symbolon V6
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-symbolon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Import current Symbolon site
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://effortless-cucurucho-35c0a0.netlify.app"
+
+          mkdir -p assets/card-images-v6 assets/slides assets
+
+          # Core V6 files
+          for f in index.html app-v6.js styles-v6.css course-data.js cards-data-v6.js cases-data.js cloud-config.js cloud.js audio-data.js; do
+            echo "Downloading $f"
+            curl --fail --location --retry 3 "$BASE/$f" -o "$f"
+          done
+
+          # Optional static/PWA files
+          curl --fail --location "$BASE/manifest.webmanifest" -o manifest.webmanifest || true
+          curl --fail --location "$BASE/assets/icon-192.png" -o assets/icon-192.png || true
+          curl --fail --location "$BASE/assets/icon-512.png" -o assets/icon-512.png || true
+
+          # 78 real cards. Prefer V6 path, fall back to V5 local path.
+          for n in $(seq -w 1 78); do
+            target="assets/card-images-v6/c${n}.webp"
+            if ! curl --fail --location --retry 2 "$BASE/assets/card-images-v6/c${n}.webp" -o "$target"; then
+              curl --fail --location --retry 2 "$BASE/assets/cards-real/c${n}.webp" -o "$target"
+            fi
+            test -s "$target"
+          done
+
+          # 4 visual lesson slides × 13 modules
+          for m in $(seq 0 12); do
+            for s in $(seq 0 3); do
+              curl --fail --location --retry 2 "$BASE/assets/slides/m${m}-${s}.svg" -o "assets/slides/m${m}-${s}.svg"
+            done
+          done
+
+          # Review build: do not cache while we are still validating.
+          cat > _headers <<'EOF'
+          /*
+            Cache-Control: no-cache, no-store, must-revalidate
+            X-Content-Type-Options: nosniff
+          /assets/card-images-v6/*
+            Cache-Control: public, max-age=3600
+          EOF
+
+          # Make the deployed version unmistakable.
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('CLOUDFLARE V6','GITHUB V7')
+          s=s.replace('<span class="version-badge">V6</span>','<span class="version-badge">V7</span>')
+          p.write_text(s,encoding='utf-8')
+          PY
+
+          cat > VERSION.txt <<'EOF'
+          SYMBOLON V7 · GitHub public · imported with 78 local real-card images
+          EOF
+
+      - name: Commit imported site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html app-v6.js styles-v6.css course-data.js cards-data-v6.js cases-data.js cloud-config.js cloud.js audio-data.js manifest.webmanifest assets _headers VERSION.txt || true
+          git diff --cached --quiet || git commit -m "Import Symbolon V7 with 78 local card images"
+          git push
