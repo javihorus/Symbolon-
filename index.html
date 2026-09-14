@@ -2,11 +2,6 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-<!-- This site is hosted on Netlify. Anyone can build and deploy a site
-     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=367605b3-7e55-414e-a558-3836d957c81f
-     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
-<meta name="hosting-provider" content="Netlify">
-<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=367605b3-7e55-414e-a558-3836d957c81f">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#12110f" />
   <meta name="description" content="SYMBOLON · El juego del recuerdo — curso interactivo de estudio, biblioteca de 78 cartas, práctica y diario." />
@@ -15,17 +10,17 @@
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
   <link rel="stylesheet" href="styles-v8.css?v=9" />
-<script>
-// SYMBOLON V6: desactivar caché PWA antigua durante revisión
-if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}
-if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
-</script>
+  <link rel="stylesheet" href="styles-v10.css?v=10" />
+  <script>
+    if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}
+    if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
+  </script>
 </head>
 <body>
   <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
   <header class="topbar">
     <button class="icon-btn mobile-only" id="menuBtn" aria-label="Abrir menú">☰</button>
-    <a class="brand" href="#home"><span class="brand-mark">◐</span><span>SYMBOLON</span><span class="version-badge">V9</span></a>
+    <a class="brand" href="#home"><span class="brand-mark">◐</span><span>SYMBOLON</span><span class="version-badge">V10</span></a>
     <div class="top-actions">
       <button class="ghost-btn" id="fontBtn" title="Tamaño de texto">Aa</button>
       <button class="ghost-btn" id="installBtn">Instalar</button>
@@ -50,7 +45,7 @@ if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
           <button data-route="progress">◔ <span>Mi progreso</span></button>
         </nav>
         <div class="nav-divider"></div>
-        <div class="module-caption">MÓDULOS</div>
+        <div class="module-caption">MÓDULOS DE APOYO</div>
         <nav id="moduleNav" class="module-nav"></nav>
         <div class="nav-divider"></div>
         <nav class="minor-nav"><button data-route="sources">Fuentes y método</button><button data-route="settings">Ajustes</button></nav>
@@ -72,6 +67,6 @@ if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
   <script src="cloud.js"></script>
   <script src="audio-data.js"></script>
   <script src="app-v8.js?v=9"></script>
+  <script src="study-v10.js?v=10"></script>
 </body>
 </html>
-<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="367605b3-7e55-414e-a558-3836d957c81f" data-app-host="app.netlify.com"></script>
