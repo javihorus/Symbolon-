@@ -1,9 +1,6 @@
-// SYMBOLON · Supabase DESACTIVADA temporalmente.
-// No reutilizar el proyecto de SHEFA.
-// Cuando creemos un proyecto Supabase exclusivo para Symbolon,
-// sustituiremos estos valores por su URL y anon key propias.
+// SYMBOLON · Supabase propia e independiente de SHEFA.
 window.SYMBOLON_CLOUD_CONFIG = {
-  url: '',
-  anonKey: '',
+  url: 'https://jualodjwowanagjbyrlm.supabase.co',
+  anonKey: 'sb_publishable_82hI1MDSxS-NnCvUenY6LA_ulSIFAD7',
   table: 'symbolon_user_state'
 };
