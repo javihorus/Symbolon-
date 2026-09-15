@@ -1,14 +1,9 @@
 (() => {
   'use strict';
 
-  function openCard(id){
-    if(!id) return;
-    const target = '#card/' + id;
-    if(location.hash === target){
-      window.dispatchEvent(new HashChangeEvent('hashchange'));
-    } else {
-      location.hash = target;
-    }
+  function hrefFor(id){
+    const path = location.pathname || '/';
+    return `${path}?v=15&open=${encodeURIComponent(id)}#card/${encodeURIComponent(id)}`;
   }
 
   function upgradeFundamentalLinks(){
@@ -16,47 +11,28 @@
       const id = card.dataset.openCard;
       if(!id) return;
 
-      const hint = card.querySelector('.v10-card-copy > small');
-      if(hint && !card.querySelector('[data-card-link]')){
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'primary v13-card-link';
-        btn.dataset.cardLink = id;
-        btn.textContent = 'Abrir ficha completa';
-        hint.replaceWith(btn);
-      }
+      // Remove the SPA-only click assigned by older study layers. The CTA below is
+      // deliberately a real <a href> so Safari can navigate even if a JS handler fails.
+      card.onclick = null;
+      card.style.cursor = 'default';
+      card.removeAttribute('role');
+      card.removeAttribute('tabindex');
 
-      card.setAttribute('role','link');
-      card.setAttribute('tabindex','0');
-      card.style.cursor = 'pointer';
+      let link = card.querySelector('.v15-card-link');
+      if(!link){
+        const old = card.querySelector('[data-card-link], .v13-card-link, .v10-card-copy > small');
+        link = document.createElement('a');
+        link.className = 'primary v13-card-link v15-card-link';
+        link.textContent = 'Abrir ficha completa';
+        link.setAttribute('aria-label', `Abrir ficha completa de ${card.querySelector('h2')?.textContent || 'esta carta'}`);
+        if(old) old.replaceWith(link);
+        else card.querySelector('.v10-card-copy')?.appendChild(link);
+      }
+      link.href = hrefFor(id);
+      link.dataset.nativeCardLink = id;
+      link.onclick = e => e.stopPropagation(); // keep native navigation; only stop parent bubbling
     });
   }
-
-  document.addEventListener('click', e => {
-    const explicit = e.target.closest('[data-card-link]');
-    if(explicit){
-      e.preventDefault();
-      e.stopPropagation();
-      openCard(explicit.dataset.cardLink);
-      return;
-    }
-
-    const card = e.target.closest('.v10-fundamental[data-open-card]');
-    if(card){
-      e.preventDefault();
-      e.stopPropagation();
-      openCard(card.dataset.openCard);
-    }
-  }, true);
-
-  document.addEventListener('keydown', e => {
-    if(e.key !== 'Enter' && e.key !== ' ') return;
-    const card = e.target.closest('.v10-fundamental[data-open-card]');
-    if(card){
-      e.preventDefault();
-      openCard(card.dataset.openCard);
-    }
-  }, true);
 
   const obs = new MutationObserver(() => requestAnimationFrame(upgradeFundamentalLinks));
   window.addEventListener('DOMContentLoaded', () => {
@@ -64,6 +40,7 @@
     const root = document.querySelector('#app');
     if(root) obs.observe(root,{childList:true,subtree:true});
   });
+  window.addEventListener('hashchange',()=>setTimeout(upgradeFundamentalLinks,0));
   setTimeout(() => {
     upgradeFundamentalLinks();
     const root = document.querySelector('#app');
