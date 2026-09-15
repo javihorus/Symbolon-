@@ -3,7 +3,7 @@
 
   function hrefFor(id){
     const path = location.pathname || '/';
-    return `${path}?v=15&open=${encodeURIComponent(id)}#card/${encodeURIComponent(id)}`;
+    return `${path}?v=16&open=${encodeURIComponent(id)}#card/${encodeURIComponent(id)}`;
   }
 
   function upgradeFundamentalLinks(){
@@ -11,8 +11,6 @@
       const id = card.dataset.openCard;
       if(!id) return;
 
-      // Remove the SPA-only click assigned by older study layers. The CTA below is
-      // deliberately a real <a href> so Safari can navigate even if a JS handler fails.
       card.onclick = null;
       card.style.cursor = 'default';
       card.removeAttribute('role');
@@ -30,7 +28,7 @@
       }
       link.href = hrefFor(id);
       link.dataset.nativeCardLink = id;
-      link.onclick = e => e.stopPropagation(); // keep native navigation; only stop parent bubbling
+      link.onclick = e => e.stopPropagation();
     });
   }
 
