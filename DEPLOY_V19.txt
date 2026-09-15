@@ -1,0 +1,2 @@
+Force Cloudflare Git deployment for V19 standalone card detail pages and uncached card links.
+Commit target: 2b5b7b7048eb888f7b7dbe3b161c0a3a75215038
