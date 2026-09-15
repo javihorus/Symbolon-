@@ -3,7 +3,7 @@
 
   function hrefFor(id){
     const path = location.pathname || '/';
-    return `${path}?v=17&open=${encodeURIComponent(id)}`;
+    return `${path}?v=18&open=${encodeURIComponent(id)}`;
   }
 
   function upgradeFundamentalLinks(){
