@@ -2,8 +2,7 @@
   'use strict';
 
   function hrefFor(id){
-    const path = location.pathname || '/';
-    return `${path}?v=18&open=${encodeURIComponent(id)}`;
+    return `ficha.html?id=${encodeURIComponent(id)}&v=19`;
   }
 
   function upgradeFundamentalLinks(){
